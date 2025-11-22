@@ -17,7 +17,14 @@ cmd-letsencrypt-active() {
   declare APP="$1"
 
   verify_app_name "$APP"
-  fn-letsencrypt-is-active "$APP"
+
+  value="$(fn-letsencrypt-active "$APP")"
+  if [[ "$value" == "true" ]];; then
+    echo "true"
+  else 
+    echo "false"
+  fi
+  # fn-letsencrypt-is-active "$APP"
 }
 
 cmd-letsencrypt-auto-renew() {
@@ -141,16 +148,8 @@ cmd-letsencrypt-disable() {
   verify_app_name "$APP"
 
   dokku_log_info1 "Disabling letsencrypt for app"
-  local le_root="$DOKKU_ROOT/$APP/letsencrypt"
-  local APP_SSL_PATH="$DOKKU_ROOT/$APP/tls"
-
-  dokku_log_verbose "Removing letsencrypt files for $APP"
-  rm -rf "$le_root"
-
-  dokku_log_verbose "Removing SSL endpoint from $APP"
-  rm -rf "$APP_SSL_PATH"
-  plugn trigger post-certs-remove "$APP"
-  plugn trigger post-domains-update "$APP"
+  
+  fn-plugin-property-write "letsencrypt" "$APP" "active" "false"
 
   dokku_log_info1 "Done"
 }

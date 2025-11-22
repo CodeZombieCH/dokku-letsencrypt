@@ -190,6 +190,14 @@ fn-letsencrypt-dns-provider() {
   fn-plugin-property-get-default "letsencrypt" "$APP" "dns-provider" ""
 }
 
+fn-letsencrypt-active() {
+  declare desc="get is active flag"
+  declare APP="$1"
+
+  fn-plugin-property-get-default "letsencrypt" "$APP" "active" "false"
+}
+
+
 fn-letsencrypt-computed-lego-docker-args() {
   declare desc="get configured lego docker args"
   declare APP="$1"
@@ -421,10 +429,12 @@ fn-letsencrypt-enable() {
 
   dokku_log_info2 "Enabling letsencrypt for $APP"
 
-  fn-letsencrypt-check-email "$APP"
-  fn-letsencrypt-acme-proxy-enable "$APP"
-  fn-letsencrypt-acme-execute-challenge "$APP" || EXIT_CODE=$? # remove ACME proxy even if this fails
-  fn-letsencrypt-acme-proxy-disable "$APP"
+  # fn-letsencrypt-check-email "$APP"
+  # fn-letsencrypt-acme-proxy-enable "$APP"
+  # fn-letsencrypt-acme-execute-challenge "$APP" || EXIT_CODE=$? # remove ACME proxy even if this fails
+  # fn-letsencrypt-acme-proxy-disable "$APP"
+
+  fn-plugin-property-write "letsencrypt" "$APP" "active" "true"
 
   if [[ "$EXIT_CODE" == 0 ]]; then
     dokku_log_info1 "Done"
