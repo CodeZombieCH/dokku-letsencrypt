@@ -19,7 +19,7 @@ cmd-letsencrypt-active() {
   verify_app_name "$APP"
 
   value="$(fn-letsencrypt-active "$APP")"
-  if [[ "$value" == "true" ]];; then
+  if [[ "$value" == "true" ]]; then
     echo "true"
   else 
     echo "false"
